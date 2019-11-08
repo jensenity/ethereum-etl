@@ -6,18 +6,32 @@ from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExport
 from blockchainetl.logging_utils import logging_basic_config
 
 
-def get_item_exporter(output):
+def get_item_exporter(domain, output):
     if output is not None:
-        from blockchainetl.jobs.exporters.google_pubsub_item_exporter import GooglePubSubItemExporter
-        item_exporter = GooglePubSubItemExporter(item_type_to_topic_mapping={
-            'block': output + '.blocks',
-            'transaction': output + '.transactions',
-            'log': output + '.logs',
-            'token_transfer': output + '.token_transfers',
-            'trace': output + '.traces',
-            'contract': output + '.contracts',
-            'token': output + '.tokens',
-        })
+        if domain == 'gcp':
+            from blockchainetl.jobs.exporters.google_pubsub_item_exporter import GooglePubSubItemExporter
+            item_exporter = GooglePubSubItemExporter(item_type_to_topic_mapping={
+                'block': output + '.blocks',
+                'transaction': output + '.transactions',
+                'log': output + '.logs',
+                'token_transfer': output + '.token_transfers',
+                'trace': output + '.traces',
+                'contract': output + '.contracts',
+                'token': output + '.tokens',
+            })
+        elif domain == 'aws':
+            from blockchainetl.jobs.exporters.aws_kinesis_item_exporter import AwsKinesisItemExporter
+            item_exporter = AwsKinesisItemExporter(item_type_to_topic_mapping={
+                'block': output + '_blocks',
+                'transaction': output + '_transactions',
+                'log': output + '_logs',
+                'token_transfer': output + '_token_transfers',
+                'trace': output + '_traces',
+                'contract': output + '_contracts',
+                'token': output + '_tokens',
+            })
+        else:
+            logging.warning('Please input domain of output')
     else:
         item_exporter = ConsoleItemExporter()
 
