@@ -7,5 +7,7 @@ WORKDIR /$PROJECT_DIR
 COPY . .
 RUN apk add --no-cache gcc musl-dev  #for C libraries: <limits.h> <stdio.h>
 RUN pip install --upgrade pip && pip install -e /$PROJECT_DIR/
+RUN pip install boto3
+RUN pip install timeout_decorator
 
 ENTRYPOINT ["python", "ethereumetl"]
